@@ -1,8 +1,24 @@
 <?php
-session_start();
 include_once('db.php');
+session_start();
 include_once('sendmail.php');
 email_send();
+
+if(isset($_GET['edit'])){
+  $TicketNo = $_GET['edit'];
+  $irDetails = mysqli_query($conn, "SELECT * FROM tbltickets WHERE TicketNo = $TicketNo");
+  $a = mysqli_fetch_array($irDetails);
+  $TicketNo = $a['TicketNo'];
+  $FullName = $a['FullName'];
+  $EmailAddress = $a['EmailAddress'];
+  $ImmediateSuperior = $a['ImmediateSuperior'];
+  $CallbackNumber = $a['CallbackNumber'];
+  $Site = $a['Site'];
+  $BusinessUnit = $a['BusinessUnit'];
+  $Title = $a['Title'];
+  $Details = $a['Details'];
+
+}
 
 ?>
 
@@ -71,13 +87,13 @@ email_send();
           <div class="col-md-3">
             <div class="list-group">
               <a href="index.php" class="list-group-item">
-                <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Dashboard
               </a>
               <a href="fileIR.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File Incident Report <span class="badge">12</span></a>
               <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Previous Incident Report <span class="badge">33</span></a>
               <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
               <a href="fileTicket.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
-              <a href="users.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> File Maintenance <span class="badge">203</span></a>
+              <a href="users.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Users <span class="badge">203</span></a>
             </div>
 
             <div class="well">
@@ -114,7 +130,7 @@ email_send();
                 <form method = "POST">
                   <div class="form-group">
                     <label>Incident Report No</label>
-                    <input type="text" name="IncidentReportNo" class="form-control" placeholder="Enter IR no here">
+                    <input type="text" name="IncidentReportNo" value="<?php echo $TicketNo; ?>"class="form-control">
                   </div>
                   <div class="form-group">
                     <label>Subject</label>

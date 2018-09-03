@@ -1,87 +1,35 @@
 <?php
 include_once('db.php');
 session_start();
-$error = false;
-
-$fetchsite = "SELECT * FROM tblsite";
-$filtersite = mysqli_query($conn, $fetchsite);
-if(isset($_POST['btnSave'])){
-  $FullName = $_SESSION['FullName'];
-  $EmailAddress = $_SESSION['EmailAddress'];
-  $ImmediateSuperior = $_SESSION['ImmediateSuperior'];
-  $CallbackNumber = $_SESSION['CallbackNumber'];
-  $Site = $_SESSION['Site'];
-  $BusinessUnit = $_SESSION['BusinessUnit'];
-  $Title = $_POST['Title'];
-  $Details = $_POST['details'];
-
-  if(empty($FullName)){
-    $error = true;
-    $errorFullName = "Please enter FullName";
-  }
-  if(empty($EmailAddress)){
-    $error = true;
-    $errorEmailAddress = "Please enter EmailAddress";
-  }
-  if(empty($ImmediateSuperior)){
-    $error = true;
-    $errorImmediateSuperior = "Please enter ImmediateSuperior";
-  }
-  if(empty($CallbackNumber)){
-    $error = true;
-    $errorCallbackNumber = "Please enter CallbackNumber";
-  }
-  if(empty($Site)){
-    $error = true;
-    $errorSite = "Please enter Site";
-  }
-  if(empty($BusinessUnit)){
-    $error = true;
-    $errorBusinessUnit = "Please enter BusinessUnit";
-  }
-  if(empty($Title)){
-    $error = true;
-    $errorTitle = "Please enter Title";
-  }
-  if(empty($Details)){
-    $error = true;
-    $errorDetails = "Please enter details";
-  }
-  
-  if(!$error){
-    $sql = "INSERT INTO tbltickets(FullName, EmailAddress, ImmediateSuperior, CallbackNumber, Site, BusinessUnit, Title, Details, Status) VALUES ('$FullName','$EmailAddress','$ImmediateSuperior','$CallbackNumber','$Site','$BusinessUnit','$Title','$Details', 'Awaiting Response')";
-    if(mysqli_query($conn, $sql)){
-      $successMsg = "Ticket has been filed! You may get the reference number on your dashboard.";
-    }
-    else{
-      $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
-    }
-  }
-else{
-      $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
-    }
+$fetchticket = "SELECT TicketNo, FullName, Title, Site, TicketDate, Status FROM tbltickets";
+$filterticket = mysqli_query($conn, $fetchticket);
+$result = filterTable($fetchticket);
+function filterTable($fetchticket){
+  global $conn;
+  $filter_Result = mysqli_query($conn, $fetchticket);
+  return $filter_Result;
 }
-?> 
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SPi Global || File Ticket</title>
+    <title>SPi Service Desk Dashboard</title>
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link type="text/css" href="css/style.css" rel="stylesheet">
     <script src="http://cdn.ckeditor.com/4.6.1/standard/ckeditor.js"></script>
     <style>
-      body{
-        background-image:url(assets/background.png);
-        height: 100%; 
+    body{
+      background-image:url(assets/background.png);
+      height: 100%; 
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
-      }
-      </style>
+    }
+    </style>
   </head>
   <body>
 
@@ -94,9 +42,10 @@ else{
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"> SPi Global Service Desk User Portal </a>
+          <a class="navbar-brand" href="#"> SPi Global Service Desk </a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
+          
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
             <li><a href="login.php">Logout</a></li>
@@ -107,16 +56,14 @@ else{
 
     <header id="header">
       <div class="container">
-        <div class="row">
-        </div>
+        
       </div>
     </header>
 
     <section id="breadcrumb">
       <div class="container">
         <ol class="breadcrumb">
-          <li><a href="index.php">Dashboard</a></li>
-          <li class="active">Log Ticket</li>
+          <li class="active">Dashboard</li>
         </ol>
       </div>
     </section>
@@ -126,52 +73,83 @@ else{
         <div class="row">
           <div class="col-md-3">
             <div class="list-group">
-              <a href="selfservicePortal.php" class="list-group-item">
+              <a href="index.php" class="list-group-item active main-color-bg">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
-              <a href="openticketsPortal.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Previous Tickets <span class="badge">10</span></a>
-              <a href="fileTicketPortal.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
+              <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
+              <a href="fileTicket.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
             </div>
-
+            
           </div>
           <div class="col-md-9">
             <!-- Website Overview -->
             <div class="panel panel-default">
               <div class="panel-heading main-color-bg">
-                <h3 class="panel-title">File Ticket</h3>
-                <?php 
-                      if(isset($successMsg)){
-                        ?>
-                        <br>
-                        <div class = "alert alert-success">
-                          <span class = "glyphicon glyphicon-info-sign"></span>
-                          <?php echo $successMsg; ?>
-                        </div>
-                      <?php
-                      }
-                        ?>
+                <h3 class="panel-title">Analyst Dashboard</h3>
               </div>
               <div class="panel-body">
-                <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" autocomplete="off">
-                  
-                  <div class="form-group">
-                      <label>Title</label>
-                      <input type="text" name = "Title" class="form-control" placeholder="Title (i.e MS Office Installation)" value="">
-                      <span class="text-danger"><?php if(isset($errorTitle)) echo $errorTitle ?></span>
-                    </div>
-                  <div class="form-group">
-                    <label>Details</label>
-                    <textarea name="details" class="form-control" placeholder="Ticket Details">
-                    </textarea>
-                    <span class="text-danger"><?php if(isset($errorDetails)) echo $errorDetails ?></span>
+                <div class="col-md-3">
+                  <div class="well dash-box">
+                    <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span> 203</h2>
+                    <h4>Users</h4>
                   </div>
-                  <div class="form-group">
-                  <input type="submit" name="btnSave" class="btn btn-primary" value="File Ticket">
+                </div>
+                <div class="col-md-3">
+                  <div class="well dash-box">
+                    <h2><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> 12</h2>
+                    <h4>Pages</h4>
                   </div>
-                </form>
+                </div>
+                <div class="col-md-3">
+                  <div class="well dash-box">
+                    <h2><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 33</h2>
+                    <h4>Posts</h4>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="well dash-box">
+                    <h2><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> 12,334</h2>
+                    <h4>Visitors</h4>
+                  </div>
+                </div>
               </div>
               </div>
 
+              <!-- Latest Users -->
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Tickets Under Approval by ME</h3>
+                </div>
+                <div class="panel-body">
+                  <table class="table table-striped table-hover">
+                    <thead>
+                       <tr>
+                        <th>Ticket No.</th>
+                        <th>Title</th>
+                        <th>Full Name</th>
+                        <th>Site</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                      </tr>
+                     </thead>
+                     <?php while($row = mysqli_fetch_array($result)): ?>
+                      <tbody>
+                        <tr>
+                          <td><?php echo $row['TicketNo'];?></td>
+                          <td><?php echo $row['Title'];?></td>
+                          <td><?php echo $row['FullName'];?></td>
+                          <td><?php echo $row['Site'];?></td>
+                          <td><?php echo $row['Status'];?></td>
+                          <td><?php echo $row['TicketDate'];?></td>
+                          <td><a href="updateTicket.php?edit=<?php echo $row['TicketNo']?>"class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-pencil"></span></td>
+                        </tr>
+                      </tbody>
+                    <?php endwhile;?>
+
+                    </table>
+                </div>
+              </div>
           </div>
         </div>
       </div>

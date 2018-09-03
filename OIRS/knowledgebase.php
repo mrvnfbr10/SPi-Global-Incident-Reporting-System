@@ -1,126 +1,39 @@
 <?php
 include_once('db.php');
 session_start();
-//Fetch users
-$fetchusers = "SELECT FullName, username, EmailAddress, ImmediateSuperior, UserType FROM tblusers";
-$filterusers = mysqli_query($conn, $fetchusers);
-$result = filterTable($fetchusers);
 
-function filterTable($fetchusers){
+$fetchArt = "SELECT Title, tblcategory.CategoryDescription AS Category, CreationDate, CreatedBy FROM tblknowledge INNER JOIN tblcategory ON tblknowledge.CategoryID = tblcategory.CategoryID";
+$filterArt = mysqli_query($conn, $fetchArt);
+$result = filterTable($fetchArt);
+
+function filterTable($fetchArt){
   global $conn;
-  $filter_Result = mysqli_query($conn, $fetchusers);
+  $filter_Result = mysqli_query($conn, $fetchArt);
   return $filter_Result;
 }
-//Fetch Category
-$fetchCat = "SELECT CategoryDescription FROM tblcategory";
+
+$fetchCat = "SELECT * FROM tblcategory";
 $filterCat = mysqli_query($conn, $fetchCat);
-$catResult = filterCatTable($fetchCat);
-function filterCatTable($fetchCat){
-  global $conn;
-  $filter_CatResult = mysqli_query($conn, $fetchCat);
-  return $filter_CatResult;
-}
-
-$fetchCam = "SELECT * FROM tblbusinessunit";
-$filterCam = mysqli_query($conn, $fetchCam);
-$camResult = filterCamTable($fetchCam);
-function filterCamTable($fetchCam){
-  global $conn;
-  $filter_CamResult = mysqli_query($conn, $fetchCam);
-  return $filter_CamResult;
-}
-
-$fetchsite = "SELECT * FROM tblsite";
-$filtersite = mysqli_query($conn, $fetchsite);
-
 $error = false;
-
-if(isset($_POST['catSave'])){
-
-  $CategoryDesc = $_POST['CategoryDesc'];
-  
-
-  if(empty($CategoryDesc)){
-    $error = true;
-    $errorCategory = "Please enter category description";
-  }
-  if(!$error){
-    $sql = "INSERT INTO tblcategory (CategoryDescription) VALUES('$CategoryDesc')";
-    if(mysqli_query($conn, $sql)){
-      $successMsg = "Succesfully added category into database!";
-    }
-    else{
-      $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
-    }
-  }
-}
-if(isset($_POST['camSave'])){
-
-  $CampaignName = $_POST['CampaignName'];
-  
-
-  if(empty($CampaignName)){
-    $error = true;
-    $errorCategory = "Please enter Business Unit/Campaign Name";
-  }
-  if(!$error){
-    $sql = "INSERT INTO tblbusinessunit (BusinessUnitDesc) VALUES('$CampaignName')";
-    if(mysqli_query($conn, $sql)){
-      $successMsg = "Succesfully added Campaign into database!";
-    }
-    else{
-      $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
-    }
-  }
-}
 if(isset($_POST['btnSave'])){
-  $FullName = $_POST['FullName'];
-  $username = $_POST['username'];
-  $password = $_POST['password'];
-  $EmailAddress = $_POST['EmailAddress'];
-  $CallbackNumber = $_POST['CallbackNumber'];
-  $BusinessUnit = $_POST['BusinessUnit'];
-  $Site = $_POST['Site'];
-  $ImmediateSuperior = $_POST['ImmediateSuperior'];
-  $UserType = $_POST['UserType'];
+  $Title = $_POST['Title'];
+  $Body = $_POST['Body'];
+  $Category = $_POST['Category'];
+  $Author = $_SESSION['FullName'];
 
-  if(empty($FullName)){
+  if(empty($Title)){
     $error = true;
-    $errorFullName = "Please enter FullName.";
+    $errorFullName = "Please enter Title.";
   }
   
-  if(empty($username)){
+  if(empty($Body)){
     $error = true;
-    $errorusername = "Please enter Username.";
-  }
-  if(empty($password)){
-    $error = true;
-    $errorpassword = "Please enter Password.";
-  }
-  if(empty($EmailAddress)){
-    $error = true;
-    $errorEmailAddress = "Please enter Email Address.";
-  }
-  if(empty($CallbackNumber)){
-    $error = true;
-    $errorCallbackNumber = "Please enter Callback Number.";
-  }
-  if(empty($BusinessUnit)){
-    $error = true;
-    $errorBusinessUnit = "Please enter Business Unit.";
-  }
-  if(empty($ImmediateSuperior)){
-    $error = true;
-    $errorImmediateSuperior = "Please enter Immediate Superior.";
-  }
-  if(empty($UserType)){
-    $error = true;
-    $errorUserType = "Please enter User Type.";
+    $errorusername = "Please enter Details.";
   }
   if(!$error){
-    $sql = "INSERT INTO tblusers(FullName, username, password, EmailAddress, CallbackNumber, BusinessUnit, Site, ImmediateSuperior, UserType) VALUES ('$FullName', '$username','$password','$EmailAddress','$CallbackNumber','$BusinessUnit', '$Site','$ImmediateSuperior','$UserType')";
+    $sql = "INSERT INTO tblknowledge(Title, Details, CategoryID, CreatedBy) VALUES ('$Title', '$Body','$Category','$Author')";
     if(mysqli_query($conn, $sql)){
-      $successMsg = "Account has been sucessfully created!";
+      $successMsg = "Article has been saved to database!";
     }
     else{
       $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
@@ -134,11 +47,12 @@ if(isset($_POST['btnSave'])){
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SPi Service Desk | File Maintenance</title>
+    <title>SPi Service Desk | Knowledge Base</title>
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <script src="http://cdn.ckeditor.com/4.6.1/standard/ckeditor.js"></script>
+
     <style>
       body{
         background-image:url(assets/background.png);
@@ -160,10 +74,16 @@ if(isset($_POST['btnSave'])){
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">SPi Global Incident Reporting System</a>
+          <a class="navbar-brand" href="#">SPi Global Service Desk</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li><a href="index.php">Home</a></li>
+            <li class="active"><a href="knowledgebase.php">Knowledge Base</a></li>
+            <li><a href="reports.php">Reports</a></li>
+          </ul>
           <ul class="nav navbar-nav navbar-right">
+            <li><h6 id = "demo"></h6></li>
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
             <li><a href="login.php">Logout</a></li>
           </ul>
@@ -181,8 +101,7 @@ if(isset($_POST['btnSave'])){
     <section id="breadcrumb">
       <div class="container">
         <ol class="breadcrumb">
-          <li><a href="index.php">Dashboard</a></li>
-          <li class="active">File Maintenance</li>
+          <li class="active">Knowledge Base</a></li>
         </ol>
       </div>
     </section>
@@ -190,22 +109,12 @@ if(isset($_POST['btnSave'])){
     <section id="main">
       <div class="container">
         <div class="row">
-          <div class="col-md-3">
-            <div class="list-group">
-              <a href="index.php" class="list-group-item"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard </a>
-              <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File Incident Report <span class="badge">12</span></a>
-              <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Previous Incident Reports <span class="badge">33</span></a>
-              <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
-              <a href="fileTicket.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
-              <a href="users.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> File Maintenance <span class="badge"></span></a>
-            </div>
-
-          </div>
-          <div class="col-md-9">
+          
+          <div class="col-md-12">
             <!-- Website Overview -->
             <div class="panel panel-default">
               <div class="panel-heading main-color-bg">
-                <h3 class="panel-title">File Maintenance</h3>
+                <h3 class="panel-title">Knowledge Base</h3>
                       <?php 
                       if(isset($successMsg)){
                         ?>
@@ -222,8 +131,8 @@ if(isset($_POST['btnSave'])){
               <div class="panel-body">
                 <div class="row">
                       <ul class="nav nav-tabs">
-                      <li class="active"><a data-toggle="tab" href="#list">All users</a></li>
-                      <li><a data-toggle="tab" href="#form">Add User</a></li>
+                      <li class="active"><a data-toggle="tab" href="#list">All Articles</a></li>
+                      <li><a data-toggle="tab" href="#form">Create Article</a></li>
                       <li><a data-toggle="tab" href="#Categories">Categories</a></li>
                       <li><a data-toggle="tab" href="#businessUnit">Business Unit</a></li>
                       </ul>        
@@ -236,22 +145,20 @@ if(isset($_POST['btnSave'])){
                     <table class="table table-bordered table-hover">
                      <thead>
                        <tr>
-                         <th>Full Name</th>
-                         <th>Username</th>
-                         <th>Email Address</th>
-                         <th>Immediate Superior</th>
-                         <th>User Type</th>
+                         <th>Title</th>
+                         <th>Category</th>
+                         <th>Date</th>
+                         <th>Author</th>
                          <th>Action</th>
                        </tr>
                      </thead>
                      <?php while($row = mysqli_fetch_array($result)): ?>
                       <tbody>
                         <tr>
-                          <td><?php echo $row['FullName'];?></td>
-                          <td><?php echo $row['username'];?></td>
-                          <td><?php echo $row['EmailAddress'];?></td>
-                          <td><?php echo $row['ImmediateSuperior'];?></td>
-                          <td><?php echo $row['UserType'];?></td>
+                          <td><?php echo $row['Title'];?></td>
+                          <td><?php echo $row['Category']?></td>
+                          <td><?php echo $row['CreationDate']?></td>
+                          <td><?php echo $row['CreatedBy']?></td>
                           <td><button type="button" class="btn btn-warning" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-pencil"></span></td>
                           <td><button type="button" class="btn btn-danger" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-trash"></span></td>
                         </tr>
@@ -266,78 +173,29 @@ if(isset($_POST['btnSave'])){
                     <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" autocomplete="off">
                     <br>
                     <div class="form-group">
-                      <label>Full Name</label>
+                      <label>Title</label>
                       <br>
-                      <input type="text" class="form-control" name="FullName" placeholder="Juan">
-                      <span class="text-danger"><?php if(isset($errorFullName)) echo $errorFullName ?> </span>
+                      <input type="text" class="form-control" name="Title" placeholder="Title">
+                      <span class="text-danger"><?php if(isset($errorTitle)) echo $errorTitle ?> </span>
                     </div>
 
                     <div class="form-group">
-                      <label>Username</label>
-                      <br>
-                      <input type="text" class="form-control" name="username" placeholder="user123">
-                      <span class="text-danger"><?php if(isset($errorusername)) echo $errorusername ?> </span>
+                      <label>Article Body</label>
+                      <textarea class="form-control" name="Body" placeholder="Type something here. . "></textarea>
+                      <span class="text-danger"><?php if(isset($errorBody)) echo $errorBody ?></span>
                     </div>
 
                     <div class="form-group">
-                      <label>Password</label>
-                      <br>
-                      <input type="Password" class="form-control" name="password" placeholder="">
-                      <span class="text-danger"><?php if(isset($errorpassword)) echo $errorpassword ?> </span>
-                    </div>
-
-                    <div class="form-group">
-                      <label>Email Address</label>
-                      <br>
-                      <input type="Email" class="form-control" name="EmailAddress" placeholder="example@example.com">
-                      <span class="text-danger"><?php if(isset($errorEmailAddress)) echo $errorEmailAddress ?> </span>
-                    </div>
-
-                    <div class="form-group">
-                      <label>Callback Number</label>
-                      <br>
-                      <input type="text" class="form-control" name="CallbackNumber" placeholder="123456">
-                      <span class="text-danger"><?php if(isset($errorCallbackNumber)) echo $errorCallbackNumber ?> </span>
-                    </div>
-
-                    <div class="form-group">
-                      <label>Business Unit / Campaign</label>
-                      <br>
-                      <select class="form-control" name="BusinessUnit" id="BusinessUnit">
-                        <?php while($row = mysqli_fetch_array($filterCam)):;?>
-                      <option value="<?php echo $row[1];?>"><?php echo $row[1];?></option>
-                                <?php endwhile;?>
-                      </select>
-                      <span class="text-danger"><?php if(isset($errorBusinessUnit)) echo $errorBusinessUnit ?> </span>
-                    </div>
-                    <div class="form-group">
-                    <label>Site</label>
-                    <select class="form-control" name="Site" id="sel1">
-                      <?php while($row = mysqli_fetch_array($filtersite)):;?>
-                      <option value="<?php echo $row[1];?>"><?php echo $row[1];?></option>
+                    <label>Category</label>
+                    <select class="form-control" name="Category" id="sel1">
+                      <?php while($row = mysqli_fetch_array($filterCat)):;?>
+                      <option value="<?php echo $row[0];?>"><?php echo $row[1];?></option>
                                 <?php endwhile;?>
                     </select>
                     <span class="text-danger"><?php if(isset($errorSite)) echo $errorSite ?> </span>
                   </div>
                     <div class="form-group">
-                      <label>Immediate Superior</label>
-                      <br>
-                      <input type="text" class="form-control" name="ImmediateSuperior" placeholder="Juan">
-                      <span class="text-danger"><?php if(isset($errorImmediateSuperior)) echo $errorImmediateSuperior ?> </span>
-                    </div>
-
-                    <div class="form-group">
-                      <label>User Type</label>
-                      <br>
-                      <select class="form-control" name="UserType" id="UserType">
-                        <option value="Service Desk Analyst">Service Desk Analyst</option>
-                        <option value="End User">End User</option>
-                        <option value="Non-SD">Non SD</option>
-                      </select>
-                      <span class="text-danger"><?php if(isset($errorUserType)) echo $errorUserType ?> </span>
-                    </div>
-                    <div class="form-group">
-                      <input type="submit" name="btnSave" value="Register User" class="btn-lg btn-primary btn-block">
+                      <input type="submit" name="btnSave" value="Save Article" class="btn-lg btn-primary btn-block">
                     </div>
                   </form>
                 </div>
@@ -464,6 +322,10 @@ if(isset($_POST['btnSave'])){
   <script>
      CKEDITOR.replace( 'editor1' );
  </script>
+<script>
+var d = new Date();
+document.getElementById("demo").innerHTML = d;
+</script>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

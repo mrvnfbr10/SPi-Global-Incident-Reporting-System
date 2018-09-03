@@ -34,6 +34,7 @@ if(isset($_POST['btnLogin'])){
                 $_SESSION['EmailAddress'] = $row['EmailAddress'];
                 $_SESSION['CallbackNumber'] = $row['CallbackNumber'];
                 $_SESSION['BusinessUnit'] = $row['BusinessUnit'];
+                $_SESSION['Site'] = $row['Site'];
                 $_SESSION['ImmediateSuperior'] = $row['ImmediateSuperior'];
                 header("location: index.php");
             }
@@ -42,6 +43,7 @@ if(isset($_POST['btnLogin'])){
                 $_SESSION['EmailAddress'] = $row['EmailAddress'];
                 $_SESSION['CallbackNumber'] = $row['CallbackNumber'];
                 $_SESSION['BusinessUnit'] = $row['BusinessUnit'];
+                $_SESSION['Site'] = $row['Site'];
                 $_SESSION['ImmediateSuperior'] = $row['ImmediateSuperior'];
                 header("location: selfservicePortal.php");
             }
@@ -50,8 +52,9 @@ if(isset($_POST['btnLogin'])){
                 $_SESSION['EmailAddress'] = $row['EmailAddress'];
                 $_SESSION['CallbackNumber'] = $row['CallbackNumber'];
                 $_SESSION['BusinessUnit'] = $row['BusinessUnit'];
+                $_SESSION['Site'] = $row['Site'];
                 $_SESSION['ImmediateSuperior'] = $row['ImmediateSuperior'];
-              $errorMsg = "Oops! That feature isn't available yet.";
+                header("location: nonsdportal.php");
             }
         } 
         else{

@@ -1,13 +1,35 @@
 <?php
 include_once('db.php');
 session_start();
+
+if(isset($_GET['edit'])){
+  $TicketNo = $_GET['edit'];
+  $ticketDetails = mysqli_query($conn, "SELECT * FROM tbltickets WHERE TicketNo = $TicketNo");
+  $a = mysqli_fetch_array($ticketDetails);
+  $TicketNo = $a['TicketNo'];
+  $FullName = $a['FullName'];
+  $EmailAddress = $a['EmailAddress'];
+  $ImmediateSuperior = $a['ImmediateSuperior'];
+  $CallbackNumber = $a['CallbackNumber'];
+  $Site = $a['Site'];
+  $BusinessUnit = $a['BusinessUnit'];
+  $Title = $a['Title'];
+  $Details = $a['Details'];
+
+}
+
+$fetchCat = "SELECT * FROM tblcategory ORDER BY CategoryDescription";
+$filterCat = mysqli_query($conn, $fetchCat);
+
+
 $error = false;
 $fetchcampaign = "SELECT * FROM tblbusinessunit";
 $filterunit = mysqli_query($conn, $fetchcampaign);
 $fetchsite = "SELECT * FROM tblsite";
 $filtersite = mysqli_query($conn, $fetchsite);
 
-if(isset($_POST['btnSave'])){
+if(isset($_POST['btnUpdate'])){
+  $TicketNo = $_POST['TicketNo'];
   $FullName = $_POST['FullName'];
   $EmailAddress = $_POST['EmailAddress'];
   $ImmediateSuperior = $_POST['ImmediateSuperior'];
@@ -15,7 +37,7 @@ if(isset($_POST['btnSave'])){
   $Site = $_POST['Site'];
   $BusinessUnit = $_POST['BusinessUnit'];
   $Title = $_POST['Title'];
-  $Details = $_POST['editor1'];
+  $Details = $_POST['details'];
   $Category = $_POST['Category'];
   $TicketType = $_POST['TicketType'];
   $ResponseLevel = $_POST['ResponseLevel'];
@@ -25,9 +47,9 @@ if(isset($_POST['btnSave'])){
   $FourthApprover = $_POST['FourthApprover'];
 
   if(!$error){
-    $query = "INSERT INTO tbltickets (FullName, EmailAddress, ImmediateSuperior, CallbackNumber, Site, BusinessUnit, Title, Details, Category, TicketType, ResponseLevel, FirstApprover, SecondApprover, ThirdApprover, FourthApprover, Status) VALUES ('$FullName','$EmailAddress', '$ImmediateSuperior', '$CallbackNumber','$Site','$BusinessUnit', '$Title','$Details', '$Category', '$TicketType','$ResponseLevel', '$FirstApprover','$SecondApprover','$ThirdApprover','$FourthApprover','For Level 1 Approval')";
+    $query = "UPDATE tbltickets SET FullName = '$FullName', EmailAddress = '$EmailAddress', ImmediateSuperior = '$ImmediateSuperior', CallbackNumber = '$CallbackNumber', Site = '$Site', BusinessUnit = '$BusinessUnit', Title = '$Title', Details = '$Details', Category = '$Category', TicketType = '$TicketType', ResponseLevel = '$ResponseLevel', FirstApprover = '$FirstApprover', SecondApprover = '$SecondApprover', ThirdApprover = 'ThirdApprover', FourthApprover = '$FourthApprover', Status = 'For Approval' WHERE TicketNo = $TicketNo ";
      if(mysqli_query($conn, $query)){
-      $successMsg = "Ticket has been filed! You may get the reference number on your dashboard.";
+      $successMsg = "Ticket has been updated!";
     }
     else{
       $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
@@ -92,7 +114,7 @@ if(isset($_POST['btnSave'])){
       <div class="container">
         <ol class="breadcrumb">
           <li><a href="index.php">Dashboard</a></li>
-          <li class="active">Log Ticket</li>
+          <li class="active">Update Ticket</li>
         </ol>
       </div>
     </section>
@@ -105,11 +127,11 @@ if(isset($_POST['btnSave'])){
               <a href="index.php" class="list-group-item">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
-              <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File Incident Report <span class="badge">12</span></a>
-              <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Previous Incident Report <span class="badge">33</span></a>
+              <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> File Incident Report</a>
+              <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Previous Incident Report <span class="badge">33</span></a>
               <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
               <a href="fileTicket.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
-              <a href="users.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> File Maintenance <span class="badge"></span></a>
+              <a href="users.php" class="list-group-item"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> File Maintenance <span class="badge"></span></a>
             </div>
 
             
@@ -118,7 +140,7 @@ if(isset($_POST['btnSave'])){
             <!-- Website Overview -->
             <div class="panel panel-default">
               <div class="panel-heading main-color-bg">
-                <h3 class="panel-title">File Ticket</h3>
+                <h4 class="panel-title">Update Ticket</h4>
                 <?php 
                       if(isset($successMsg)){
                         ?>
@@ -133,55 +155,35 @@ if(isset($_POST['btnSave'])){
               </div>
               <div class="panel-body">
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" autocomplete="off">
-                  <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" name = "FullName" value = "<?php echo $_SESSION['FullName'] ?>" class="form-control" placeholder="i.e Juan Dela Cruz">
-                  </div>
-                  <div class ="form-group">
-                    <label>Email Address</label>
-                    <input type="email" name = "EmailAddress" value = "<?php echo $_SESSION['EmailAddress'] ?>"class="form-control" placeholder="example@email.com">
-                  </div>
-                  <div class ="form-group">
-                      <label>Immediate Superior</label>
-                      <input type="text" name = "ImmediateSuperior" value = "<?php echo $_SESSION['ImmediateSuperior'] ?>" class="form-control" placeholder="i.e Juan Dela Cruz">
-                    </div>
-                  <div class="form-group">
-                    <label>Callback Number</label>
-                    <input type="number" name = "CallbackNumber" value = "<?php echo $_SESSION['CallbackNumber'] ?>" class="form-control" placeholder="i.e 29911">
-                  </div>
-                  <div class="form-group">
-                    <label>Site</label>
-                    <select class="form-control" name="Site" id="sel1">
-                      <option value="<?php echo $_SESSION['Site']?>"><?php echo $_SESSION['Site']?></option>
-                       <?php while($row = mysqli_fetch_array($filtersite)):;?>
-                      <option value="<?php echo $row[1];?>"><?php echo $row[1];?></option>
-                                <?php endwhile;?>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                      <label>Business Unit</label>
-                      <select class="form-control" name="BusinessUnit" id="sel1">
-                       <option value="<?php echo $_SESSION['BusinessUnit']?>"><?php echo $_SESSION['BusinessUnit']?></option>
-                        <?php while($row = mysqli_fetch_array($filterunit)):;?>
-                      <option value="<?php echo $row[1];?>"><?php echo $row[1];?></option>
-                                <?php endwhile;?>
-                      </select>
-                    </div>
+                  <input type="hidden" name="TicketNo" value="<?php echo $TicketNo; ?>">
+                  <input type="hidden" name="FullName" value="<?php echo $FullName; ?>">
+                  <input type="hidden" name="EmailAddress" value="<?php echo $EmailAddress; ?>">
+                  <input type="hidden" name="ImmediateSuperior" value="<?php echo $ImmediateSuperior; ?>">
+                  <input type="hidden" name="CallbackNumber" value="<?php echo $CallbackNumber; ?>">
+                  <input type="hidden" name="Site" value="<?php echo $Site; ?>">
+                  <input type="hidden" name="BusinessUnit" value="<?php echo $BusinessUnit; ?>">
+                  <h2>Ticket No: <?php echo $TicketNo?></h2>
+                  <h4>Full Name: <?php echo $FullName?></h4>
+                  <h4>Email Address: <?php echo $EmailAddress?></h4>
+                  <h4>Immediate Superior: <?php echo $ImmediateSuperior?></h4>
+                  <h4>Callback Number: <?php echo $CallbackNumber ?></h4>
+                  <h4>Site: <?php echo $Site ?></h4>
+                  <h4>Business Unit/Campaign: <?php echo $BusinessUnit ?></h4>
                   <div class="form-group">
                       <label>Title</label>
-                      <input type="text" name = "Title" class="form-control" placeholder="Title (i.e MS Office Installation)" value="">
+                      <input type="text" name = "Title" class="form-control" placeholder="Title (i.e MS Office Installation)" value="<?php echo $Title ?>">
                     </div>
                   <div class="form-group">
                     <label>Details</label>
-                    <textarea name="editor1" class="form-control" placeholder="Incident Details">
+                    <textarea name="details" class="form-control" placeholder="Ticket Details" value = "<?php echo $Details ?>"><?php echo $Details ?>
                     </textarea>
                   </div>
                   <div class="form-group">
                       <label>Category</label>
                       <select class="form-control" name="Category" id="sel1">
-                        <option value="Account Management">Account Management</option>
-                        <option value="Software Services">Software Services</option>
-                        <option value="Hardware Services">HardwareServices</option>
+                        <?php while($row = mysqli_fetch_array($filterCat)):;?>
+                      <option value="<?php echo $row[1];?>"><?php echo $row[1];?></option>
+                                <?php endwhile;?>
                       </select>
                     </div>
                     <div class="form-group">
@@ -214,6 +216,7 @@ if(isset($_POST['btnSave'])){
                             <option value="John Green">John Green</option>
                             <option value="Robin Scherbatsky">Robin Scherbatsky</option>
                             <option value="Lily Aldrin">Lily Aldrin</option>
+                            <option value="NotApplicable">Not Applicable</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -229,6 +232,7 @@ if(isset($_POST['btnSave'])){
                             <option value="John Green">John Green</option>
                             <option value="Robin Scherbatsky">Robin Scherbatsky</option>
                             <option value="Lily Aldrin">Lily Aldrin</option>
+                            <option value="NotApplicable">Not Applicable</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -263,7 +267,8 @@ if(isset($_POST['btnSave'])){
                             <option value="NotApplicable">Not Applicable</option>
                         </select>
                     </div>
-                  <input type="submit" name = "btnSave" class="btn btn-primary" value="File Ticket">
+                  <input type="submit" name = "btnUpdate" class="btn btn-primary" value="File Ticket">
+                  <a href="fetchIR.php?edit=<?php echo $row['TicketNo']?>"class="btn btn-warning">File Incident Report</a>
                 </form>
               </div>
               </div>

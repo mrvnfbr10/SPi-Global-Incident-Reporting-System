@@ -78,11 +78,11 @@ function filterTable($fetchticket){
         <div class="row">
           <div class="col-md-3">
             <div class="list-group">
-              <a href="index.php" class="list-group-item active main-color-bg">
+              <a href="selfservicePortal.php" class="list-group-item active main-color-bg">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
-              <a href="openticketsPortal.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
-              <a href="fileTicketPortal.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
+              <a href="openticketsPortal.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Previous Tickets <span class="badge">10</span></a>
+              <a href="fileTicketPortal.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> File Ticket </a>
             </div>
           </div>
           <div class="col-md-9">

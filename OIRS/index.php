@@ -1,6 +1,14 @@
 <?php
 include_once('db.php');
 session_start();
+$fetchticket = "SELECT TicketNo, FullName, Title, Site, TicketDate, Status FROM tbltickets";
+$filterticket = mysqli_query($conn, $fetchticket);
+$result = filterTable($fetchticket);
+function filterTable($fetchticket){
+  global $conn;
+  $filter_Result = mysqli_query($conn, $fetchticket);
+  return $filter_Result;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,8 +19,9 @@ session_start();
     <title>SPi Service Desk Dashboard</title>
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <script src="http://cdn.ckeditor.com/4.6.1/standard/ckeditor.js"></script>
+    <link type="text/css" href="css/style.css" rel="stylesheet">
+    <script src="http://cdn.ckeditor.com/4.6.1/standard/ckeditor.js">
+    </script>
     <style>
     body{
       background-image:url(assets/background.png);
@@ -37,8 +46,13 @@ session_start();
           <a class="navbar-brand" href="#"> SPi Global Service Desk </a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.php">Home</a></li>
+            <li><a href="knowledgebase.php">Knowledge Base</a></li>
+            <li><a href="reports.php">Reports</a></li>
+          </ul>
           <ul class="nav navbar-nav navbar-right">
+            <li><h6 id = "demo"></h6></li>
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
             <li><a href="login.php">Logout</a></li>
           </ul>
@@ -68,11 +82,11 @@ session_start();
               <a href="index.php" class="list-group-item active main-color-bg">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
-              <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File an Incident Report <span class="badge">12</span></a>
-              <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Previously Incident Reports <span class="badge">33</span></a>
+              <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File Incident Report <span class="badge">12</span></a>
+              <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Previous Incident Reports <span class="badge">33</span></a>
               <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
               <a href="fileTicket.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
-              <a href="users.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Users <span class="badge">203</span></a>
+              <a href="users.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> File Maintenance <span class="badge"></span></a>
             </div>
             <div class="well">
               <h4>Disk Space Used</h4>
@@ -126,40 +140,35 @@ session_start();
               <!-- Latest Users -->
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Open Incident Reports</h3>
+                  <h3 class="panel-title">Open Tickets</h3>
                 </div>
                 <div class="panel-body">
                   <table class="table table-striped table-hover">
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Joined</th>
+                    <thead>
+                       <tr>
+                        <th>Ticket No.</th>
+                        <th>Title</th>
+                        <th>Full Name</th>
+                        <th>Site</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
                       </tr>
-                      <tr>
-                        <td>Jill Smith</td>
-                        <td>jillsmith@gmail.com</td>
-                        <td>Dec 12, 2016</td>
-                      </tr>
-                      <tr>
-                        <td>Eve Jackson</td>
-                        <td>ejackson@yahoo.com</td>
-                        <td>Dec 13, 2016</td>
-                      </tr>
-                      <tr>
-                        <td>John Doe</td>
-                        <td>jdoe@gmail.com</td>
-                        <td>Dec 13, 2016</td>
-                      </tr>
-                      <tr>
-                        <td>Stephanie Landon</td>
-                        <td>landon@yahoo.com</td>
-                        <td>Dec 14, 2016</td>
-                      </tr>
-                      <tr>
-                        <td>Mike Johnson</td>
-                        <td>mjohnson@gmail.com</td>
-                        <td>Dec 15, 2016</td>
-                      </tr>
+                     </thead>
+                     <?php while($row = mysqli_fetch_array($result)): ?>
+                      <tbody>
+                        <tr>
+                          <td><?php echo $row['TicketNo'];?></td>
+                          <td><?php echo $row['Title'];?></td>
+                          <td><?php echo $row['FullName'];?></td>
+                          <td><?php echo $row['Site'];?></td>
+                          <td><?php echo $row['Status'];?></td>
+                          <td><?php echo $row['TicketDate'];?></td>
+                          <td><a href="updateTicket.php?edit=<?php echo $row['TicketNo']?>"class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-pencil"></span></td>
+                        </tr>
+                      </tbody>
+                    <?php endwhile;?>
+
                     </table>
                 </div>
               </div>
@@ -218,6 +227,11 @@ session_start();
   <script>
      CKEDITOR.replace( 'editor1' );
  </script>
+ <script>
+var d = new Date();
+document.getElementById("demo").innerHTML = d;
+</script>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
