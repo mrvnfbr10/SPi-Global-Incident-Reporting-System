@@ -9,7 +9,7 @@ $result = filterTable($fetchusers);
 
 function filterTable($fetchusers){
   global $conn;
-  $filter_Result = mysqli_query($conn, $fetchusers);
+  $filter_Result = mysqli_query($conn, $fetchusers); 
   return $filter_Result;
 }
 //Fetch Category
@@ -22,14 +22,12 @@ function filterCatTable($fetchCat){
   return $filter_CatResult;
 }
 
-$fetchCam = "SELECT * FROM tblbusinessunit";
-$filterCam = mysqli_query($conn, $fetchCam);
-$camResult = filterCamTable($fetchCam);
-function filterCamTable($fetchCam){
-  global $conn;
-  $filter_CamResult = mysqli_query($conn, $fetchCam);
-  return $filter_CamResult;
-}
+
+$fetchCam = mysqli_query($conn, "SELECT * FROM tblbusinessunit");
+$filterCam = mysqli_query($conn, "SELECT * FROM tblbusinessunit");
+
+
+
 $fetchsuperior = "SELECT CONCAT(FirstName, LastName) as FullName FROM user";
 $filtersuperior = mysqli_query($conn, $fetchsuperior);
 
@@ -103,14 +101,14 @@ if(isset($_POST['delCat'])){
 if(isset($_POST['camSave'])){
 
   $CampaignName = $_POST['CampaignName'];
-  
+  $SupportGroup = $_POST['supportgroup'];
 
   if(empty($CampaignName)){
     $error = true;
     $errorCategory = "Please enter Business Unit/Campaign Name";
   }
   if(!$error){
-    $sql = "INSERT INTO tblbusinessunit (BusinessUnitDesc) VALUES('$CampaignName')";
+    $sql = "INSERT INTO tblbusinessunit (BusinessUnitDesc, SupportGroup) VALUES('$CampaignName','$SupportGroup')";
     if(mysqli_query($conn, $sql)){
       $successMsg = "Succesfully added Campaign into database!";
     }
@@ -171,6 +169,7 @@ if(isset($_POST['btnSave'])){
   $Position = $_POST['Position'];
   $CallbackNumber = $_POST['CallbackNumber'];
   $BusinessUnit = $_POST['BusinessUnit'];
+  $DeptName = $_POST['deptname'];
   $Site = $_POST['Site'];
   $ImmediateSuperior = $_POST['ImmediateSuperior'];
   $UserType = $_POST['UserType'];
@@ -290,6 +289,28 @@ if(isset($_POST['editUser'])){
   }
 }
 
+if(isset($_POST['delUser'])){
+
+  $UserID = $_POST['removeUserID'];
+  $FullName = $_POST['removeFullname'];
+  
+
+  if(empty($FullName)){
+    $error = true;
+    $errorDeparment = "Please enter category description";
+  }
+  if(!$error){
+    $sql = "DELETE FROM user WHERE UserID = '$UserID' ";
+    if(mysqli_query($conn, $sql)){
+      $successMsg = "Succesfully removed user from database!";
+    }
+    else{
+      $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
+    }
+  }
+}
+
+
 
 ?>
 <!DOCTYPE html>
@@ -347,7 +368,7 @@ if(isset($_POST['editUser'])){
     <section id="breadcrumb">
       <div class="container">
         <ol class="breadcrumb">
-          <li><a href="index.php">Dashboard</a></li>
+          <li><a href="admindashboard.php">Dashboard</a></li>
           <li class="active">File Maintenance</li>
         </ol>
       </div>
@@ -358,7 +379,7 @@ if(isset($_POST['editUser'])){
         <div class="row">
           <div class="col-md-3">
             <div class="list-group">
-              <a href="index.php" class="list-group-item"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard </a>
+              <a href="admindashboard.php" class="list-group-item"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard </a>
               <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File Incident Report <span class="badge">12</span></a>
               <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Previous Incident Reports <span class="badge">33</span></a>
               <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
@@ -514,6 +535,9 @@ if(isset($_POST['editUser'])){
                     <div class="form-group">
                       <label>Business Unit / Campaign</label>
                       <br>
+                        <?php while($row = mysqli_fetch_array($fetchCam)):;?>
+                      <input type="hidden" class="form-control" name="deptname" value="<?php echo $row[1];?>">
+                        <?php endwhile;?>
                       <select class="form-control" name="BusinessUnit" id="BusinessUnit">
                         <?php while($row = mysqli_fetch_array($filterCam)):;?>
                       <option value="<?php echo $row[0];?>"><?php echo $row[1];?></option>
@@ -669,6 +693,33 @@ if(isset($_POST['editUser'])){
   </div>
 </div>
 
+<!--Remove User Modal-->
+<div class="modal fade" id="removeUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" id="removeUserForm" autocomplete="off">
+          <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Remove User</h4>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="removeUserID" name="removeUserID" value="<?php echo $UserID; ?>">
+            <div class="form-group">
+              <label>User FullName</label>
+                <br>
+                  <input type="text" class="form-control" id="removeFullname" name="removeFullname">
+                  <span class="text-danger"><?php if(isset($errorDeparment)) echo $errorDepartment ?> </span>
+            </div>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <input type="submit" name="delUser" class="btn btn-danger" value="Remove User">
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
 
 <!--Add Category Modal -->
 <div class="modal fade" id="addCat" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -764,6 +815,11 @@ if(isset($_POST['editUser'])){
               <label>Business Unit/Campaign</label>
               <br>
               <input type="text" class="form-control" name="CampaignName">
+            </div>
+            <div class="form-group">
+              <label>Is Department a Support Group?</label>
+              <input type="radio" id="form-control" name="supportgroup" value="Yes">Yes
+              <input type="radio" id="form-control" name="supportgroup" value="No">No
             </div>
         </div>
       <div class="modal-footer">
@@ -874,6 +930,20 @@ if(isset($_POST['editUser'])){
     }
     else{
       alert("Oops! Something went wrong kindly try again later.");
+    }
+  }
+  function removeUser(UserID = null){
+    if(UserID){
+      $.ajax({
+        url: 'getuser.php',
+        type: 'post',
+        data: {UserID : UserID},
+        dataType: 'json',
+        success:function(response){
+          $("#removeUserID").val(response.UserID);
+          $("#removeFullname").val(response.FirstName);
+        }
+      });
     }
   }
 </script>
