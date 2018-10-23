@@ -9,6 +9,12 @@ $UserID = $_SESSION['UserID'];
 
 $EmailAddress = $_SESSION['EmailAddress'];
 
+$fetchticket = "SELECT COUNT(TicketNo) AS Ticket FROM tickets WHERE UserID = '$UserID' ";
+$filterticket = mysqli_query($conn, $fetchticket);
+
+$b = mysqli_fetch_array($filterticket);
+$Ticket = $b['Ticket'];
+
 if(isset($_POST['btnSave'])){
 
   $UserID = $_SESSION['UserID'];
@@ -81,7 +87,7 @@ else{
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
-            <li><a href="login.php">Logout</a></li>
+            <li><a href="index.php">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -111,8 +117,8 @@ else{
               <a href="selfservicePortal.php" class="list-group-item">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
-              <a href="openticketsPortal.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Previous Tickets <span class="badge">10</span></a>
-              <a href="fileTicketPortal.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
+              <a href="openticketsPortal.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Previous Tickets <span class="badge"><?php echo $Ticket; ?></span></a>
+              <a href="fileTicketPortal.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> File Ticket </a>
             </div>
 
           </div>

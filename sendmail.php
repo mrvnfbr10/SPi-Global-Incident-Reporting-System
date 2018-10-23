@@ -1,4 +1,5 @@
 <?php 
+include_once('db.php');
 	function send_ir() {
 		if(isset($_POST['btnSend'])) {
 			include 'phpmailer/PHPMailerAutoload.php';
@@ -115,17 +116,22 @@
 	function userconfirmation(){
 		if(isset($_POST['btnSave'])){
 			include 'phpmailer/PHPMailerAutoload.php';
+			global $conn;
 			$FullName = $_SESSION['FullName'];
 			$FirstName = $_POST['FirstName'];
 			$username = $_POST['username'];
 			$password = $_POST['password'];
 			$Position = $_POST['Position'];
+			
   			$CallbackNumber = $_POST['CallbackNumber'];
   			$BusinessUnit = $_POST['BusinessUnit'];
   			$Site = $_POST['Site'];
   			$ImmediateSuperior = $_POST['ImmediateSuperior'];
   			$UserType = $_POST['UserType'];
 			$ToAddress = $_POST['EmailAddress'];
+			$fetchdept = mysqli_query($conn, "SELECT BusinessUnitDesc FROM tblbusinessunit WHERE BusinessUnitID = '$BusinessUnit'");
+			$a = mysqli_fetch_array($fetchdept);
+			$DeptName = $a['BusinessUnitDesc'];
 			$mailer = new PHPMailer();
 			$mailer->IsSMTP();
 			$mailer->Host = 'smtp.gmail.com:465'; 
@@ -145,12 +151,12 @@
 			$mailer->FromName = 'SPi Global Service Desk';
 			$mailer->Body =  '<h2>Welcome to SPi Global Service Desk!</h2>
 			<p>Hi '.$FirstName.',<p>
-			<p>This is to confirm that you now have access to our ticketing tool. Hooray! Your account was created by:'.$FullName.'<p>
+			<p>This is to confirm that you now have access to our ticketing tool. Hooray! Your account was created by: '.$FullName.'<p>
 			<p>Our ticketing tool acts as a bridge to our users. With the ticketing tool, you may file tickets for your technical needs or report a technical issue.<p>
 			<p>To start off, here are your user credentials and other information. For safety, we would like to advise you to keep your information private to avoid data breaches.<p>
 			<p>Username: '.$username.'<p>
 			<p>Password: '.$password.'<p>
-			<p>Department: '.$BusinessUnit.'<p>
+			<p>Department: '.$DeptName.'<p>
 			<p>Superior Officer: '.$ImmediateSuperior.'<p>
 			<p>Contact No: '.$CallbackNumber.'<p>
 			<p>UserType: '.$UserType.'<p>

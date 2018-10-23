@@ -43,7 +43,7 @@ send_ir();
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
-            <li><a href="login.php">Logout</a></li>
+            <li><a href="index.php">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -59,7 +59,7 @@ send_ir();
     <section id="breadcrumb">
       <div class="container">
         <ol class="breadcrumb">
-          <li><a href="index.php">Dashboard</a></li>
+          <li><a href="admindashboard.php">Dashboard</a></li>
           <li class="active">File Incident Report</li>
         </ol>
       </div>
@@ -70,7 +70,7 @@ send_ir();
         <div class="row">
           <div class="col-md-3">
             <div class="list-group">
-              <a href="index.php" class="list-group-item">
+              <a href="admindashboard.php" class="list-group-item">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
               <a href="fileIR.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File Incident Report <span class="badge">12</span></a>
