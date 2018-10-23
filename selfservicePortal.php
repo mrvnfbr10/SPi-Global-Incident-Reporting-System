@@ -3,15 +3,12 @@ include_once('db.php');
 session_start();
 $FullName = $_SESSION['FullName']; 
 $UserID = $_SESSION['UserID'];
-$fetchticket = "SELECT TicketNo, Title, Status FROM tickets WHERE UserID = '$UserID' ";
+$fetchticket = "SELECT COUNT(TicketNo) AS TicketNo FROM tickets WHERE UserID = '$UserID' ";
 $filterticket = mysqli_query($conn, $fetchticket);
-$result = filterTable($fetchticket);
 
-function filterTable($fetchticket){
-  global $conn;
-  $filter_Result = mysqli_query($conn, $fetchticket);
-  return $filter_Result;
-}
+$a = mysqli_fetch_array($filterticket);
+$TicketNo = $a['TicketNo'];
+
 
 ?>
 <!DOCTYPE html>
@@ -24,7 +21,8 @@ function filterTable($fetchticket){
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-    <script src="http://cdn.ckeditor.com/4.6.1/standard/ckeditor.js"></script>
+    <link href="css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
     <style>
     body{
       background-image:url(assets/background.png);
@@ -53,7 +51,7 @@ function filterTable($fetchticket){
           
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?> </a></li>
-            <li><a href="login.php">Logout</a></li>
+            <li><a href="logout.php">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -81,7 +79,7 @@ function filterTable($fetchticket){
               <a href="selfservicePortal.php" class="list-group-item active main-color-bg">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
-              <a href="openticketsPortal.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Previous Tickets <span class="badge">10</span></a>
+              <a href="openticketsPortal.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge"><?php echo $TicketNo ?></span></a>
               <a href="fileTicketPortal.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> File Ticket </a>
             </div>
           </div>
@@ -107,25 +105,17 @@ function filterTable($fetchticket){
                   <h3 class="panel-title">Open Ticket filed by Me</h3>
                 </div>
                 <div class="panel-body">
-                  <table class="table table-striped table-hover">
-                    <thead>
+                  <br>
+                   <table class="table table-striped table-hover" id="tbltickets">
+                     <thead>
                        <tr>
                         <th>Ticket No.</th>
                         <th>Title</th>
+                        <th>Date</th>
                         <th>Status</th>
                         <th>Action</th>
                       </tr>
                      </thead>
-                     <?php while($row = mysqli_fetch_array($result)): ?>
-                      <tbody>
-                        <tr>
-                          <td><?php echo $row['TicketNo'];?></td>
-                          <td><?php echo $row['Title'];?></td>
-                          <td><?php echo $row['Status'];?></td>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    <?php endwhile;?>
                     </table>
                 </div>
               </div>
@@ -188,12 +178,20 @@ function filterTable($fetchticket){
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-    </script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script>
+      var d = new Date();
+      document.getElementById("demo").innerHTML = d;
+      </script>
+<script type="text/javascript">
+  $(document).ready(function(){
+   var tbltickets =  $("#tbltickets").DataTable({
+    "ajax": "enduserfetchtickets.php",
+    "order":[]
+   });
+  });
+</script>
   </body>
 </html>

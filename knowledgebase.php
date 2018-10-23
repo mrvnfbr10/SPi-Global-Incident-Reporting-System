@@ -70,14 +70,14 @@ if(isset($_POST['btnSave'])){
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li><a href="index.php">Home</a></li>
+            <li><a href="admindashboard.php">Home</a></li>
             <li class="active"><a href="knowledgebase.php">Knowledge Base</a></li>
             <li><a href="reports.php">Reports</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li><h6 id = "demo"></h6></li>
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
-            <li><a href="login.php">Logout</a></li>
+            <li><a href="index.php">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

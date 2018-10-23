@@ -42,7 +42,7 @@ session_start();
           <ul class="nav navbar-nav navbar-right">
             <li><h6 id = "demo"></h6></li>
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
-            <li><a href="login.php">Logout</a></li>
+            <li><a href="logout.php">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -62,7 +62,7 @@ session_start();
     <section id="breadcrumb">
       <div class="container">
         <ol class="breadcrumb">
-          <li><a href="index.php">Dashboard</a></li>
+          <li><a href="admindashboard.php">Dashboard</a></li>
           <li class="active">Open Tickets</li>
         </ol>
       </div>
@@ -73,7 +73,7 @@ session_start();
         <div class="row">
           <div class="col-md-3">
             <div class="list-group">
-              <a href="index.php" class="list-group-item">
+              <a href="admindashboard.php" class="list-group-item">
                 <span class="glyphicon glyphicon-home" aria-hindden="true"></span> Dashboard
               </a>
               <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File an Incident Report <span class="badge">12</span></a>

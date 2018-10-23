@@ -1,6 +1,91 @@
 <?php
-include_once('db.php');
 session_start();
+include_once('db.php');
+$error = false;
+
+if(isset($_SESSION['UserType'])){
+    if($_SESSION['UserType'] == "SDA"){
+        header("location: admindashboard.php");
+    }else if($_SESSION['UserType'] == "EU"){
+        header("location: selfservicePortal.php");
+    }else if($_SESSION['UserType'] == "NSD"){
+        header("location: nonsdportal.php");
+    }
+}
+
+if(isset($_POST['btnLogin'])){
+    $username = trim($_POST['username']);
+    $username = htmlspecialchars(strip_tags($username));
+    $password = trim($_POST['password']);
+    $password = htmlspecialchars(strip_tags($password));
+
+    if(empty($username)){
+        $error = true;
+        $errorUsername = "Please enter Username";
+    }
+    if(empty($password)){
+        $error = true;
+        $errorPassword = "Please enter Password";
+    }
+    elseif(strlen($password) < 6){
+        $error = true;
+        $errorPassword = "Your password must be atleast 6 characters";
+    }
+    if(!$error){
+        $sql = "SELECT CONCAT(user.FirstName,  user.LastName) AS FullName, user.UserID AS UserID, user.Username, user.Password, user.EmailAddress AS EmailAddress, user.CallbackNumber AS CallbackNumber,tblbusinessunit.BusinessUnitDesc as Campaign, user.Position AS Position, tblsite.SiteDesc AS Site, user.ImmediateSuperior, user.UserType FROM user INNER JOIN tblbusinessunit ON user.BusinessUnitID = tblbusinessunit.BusinessUnitID INNER JOIN tblsite ON user.SiteID = tblsite.SiteID WHERE user.Username = '$username' AND user.Password = '$password'";
+        $result = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_array($result);
+        $_SESSION['UserID'] = $row['UserID'];
+        $_SESSION['UserType'] =$row['UserType'];
+        $count = mysqli_num_rows($result);
+        if($count==1){
+
+            if($row['UserType']=="Service Desk Analyst"){
+                $_SESSION['UserType'] = "SDA";
+                $_SESSION['UserID'] = $row['UserID'];
+                $_SESSION['FullName'] = $row['FullName'];
+                $_SESSION['EmailAddress'] = $row['EmailAddress'];
+                $_SESSION['CallbackNumber'] = $row['CallbackNumber'];
+                $_SESSION['Position'] = $row['Position'];
+                $_SESSION['BusinessUnit'] = $row['Campaign'];
+                $_SESSION['Site'] = $row['Site'];
+                $_SESSION['ImmediateSuperior'] = $row['ImmediateSuperior'];
+                header("location: admindashboard.php");
+            }
+            else if ($row['UserType']=="End User"){
+                $_SESSION['UserType'] = "EU";
+                $_SESSION['UserID'] = $row['UserID'];
+                $_SESSION['FullName'] = $row['FullName'];
+                $_SESSION['EmailAddress'] = $row['EmailAddress'];
+                $_SESSION['CallbackNumber'] = $row['CallbackNumber'];
+                $_SESSION['Position'] = $row['Position'];
+                $_SESSION['BusinessUnit'] = $row['Campaign'];
+                $_SESSION['Site'] = $row['Site'];
+                $_SESSION['ImmediateSuperior'] = $row['ImmediateSuperior'];
+                header("location: selfservicePortal.php");
+            }
+            else if ($row['UserType'] == "Non-SD"){
+                $_SESSION['UserType'] = "NSD";
+                $_SESSION['UserID'] = $row['UserID'];
+                $_SESSION['FullName'] = $row['FullName'];
+                $_SESSION['EmailAddress'] = $row['EmailAddress'];
+                $_SESSION['CallbackNumber'] = $row['CallbackNumber'];
+                $_SESSION['Position'] = $row['Position'];
+                $_SESSION['BusinessUnit'] = $row['Campaign'];
+                $_SESSION['Site'] = $row['Site'];
+                $_SESSION['ImmediateSuperior'] = $row['ImmediateSuperior'];
+                header("location: nonsdportal.php");
+            }
+        } 
+        else{
+
+            $errorMsg = "Oops! You may have entered the wrong credentials. Kindly try entering correct ones.";
+        }          
+    }
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,22 +93,20 @@ session_start();
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SPi Service Desk Dashboard</title>
+    <title>SPi Global SupportDesk || Login</title>
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link type="text/css" href="css/style.css" rel="stylesheet">
-    <script src="http://cdn.ckeditor.com/4.6.1/standard/ckeditor.js">
-    </script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <link href="css/style.css" rel="stylesheet">
+    <script src="http://cdn.ckeditor.com/4.6.1/standard/ckeditor.js"></script>
     <style>
-    body{
-      background-image:url(assets/background.png);
-      height: 100%; 
+      body{
+        background-image:url(assets/background.png);
+        height: 100%; 
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
-    }
-    </style>
+      }
+      </style>
   </head>
   <body>
 
@@ -36,144 +119,67 @@ session_start();
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#"> SPi Global Service Desk </a>
+          <a class="navbar-brand" href="#">SPi Global Service Desk</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Home</a></li>
-            <li><a href="knowledgebase.php">Knowledge Base</a></li>
-            <li><a href="reports.php">Reports</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><h6 id = "demo"></h6></li>
-            <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
-            <li><a href="login.php">Logout</a></li>
-          </ul>
+
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
     <header id="header">
       <div class="container">
-        
+        <div class="row">
+          <div class="col-md-12">
+            <img src="assets/logofull.png" class="center-block" style="width:300px;height:200px;">
+          </div>
+        </div>
       </div>
     </header>
-
-    <section id="breadcrumb">
-      <div class="container">
-        <ol class="breadcrumb">
-          <li class="active">Dashboard</li>
-        </ol>
-      </div>
-    </section>
 
     <section id="main">
       <div class="container">
         <div class="row">
-          <div class="col-md-3">
-            <div class="list-group">
-              <a href="index.php" class="list-group-item active main-color-bg">
-                <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
-              </a>
-              <a href="fileIR.php" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> File Incident Report <span class="badge">12</span></a>
-              <a href="previousIR.php" class="list-group-item"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Previous Incident Reports <span class="badge">33</span></a>
-              <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
-              <a href="fileTicket.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
-              <a href="users.php" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> File Maintenance <span class="badge"></span></a>
+          <div class="col-md-4 col-md-offset-4">
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" id="login" autocomplete="off" class="well">
+            <?php if(isset($errorMsg)){
+                ?>
+                <div class = "alert alert-Danger">
+                    <span class = "glyphicon glyphicon-info-sign"></span>
+                    <?php echo $errorMsg; ?>
             </div>
-            <div class="well">
-              <h4>Disk Space Used</h4>
-              <div class="progress">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                      60%
-              </div>
-            </div>
-            <h4>Bandwidth Used </h4>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%;">
-                    40%
-            </div>
-          </div>
-            </div>
-          </div>
-          <div class="col-md-9">
-            <!-- Website Overview -->
-            <div class="panel panel-default">
-              <div class="panel-heading main-color-bg">
-                <h3 class="panel-title">Website Overview</h3>
-              </div>
-              <div class="panel-body">
-                
-              </div>
-              </div>
-
-              <!-- Latest Users -->
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h3 class="panel-title">Open Tickets</h3>
-                </div>
-                <div class="panel-body">
-                </div>
-              </div>
+        <?php
+            }  
+        ?>    
+            <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Enter Username">
+                    <span class="text-danger"><?php if(isset($errorUsername)) echo $errorUsername ?> </span>
+                  </div>
+                  <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Password">
+                    <span class="text-danger"><?php if(isset($errorPassword)) echo $errorPassword ?></span>
+                  </div>
+                  <button type="submit" name="btnLogin" class="btn btn-success btn-block">Login</button>
+              </form>
           </div>
         </div>
       </div>
     </section>
 
     <footer id="footer">
-      <p>Copyright SPi Global Inc, &copy; 2018</p>
+      <p>Copyright SPi Global, &copy; 2018</p>
     </footer>
 
-    <!-- Modals -->
+  <script>
+     CKEDITOR.replace( 'editor1' );
+ </script>
 
-    <!-- Add Page -->
-    <div class="modal fade" id="addPage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form>
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Add Page</h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Page Title</label>
-          <input type="text" class="form-control" placeholder="Page Title">
-        </div>
-        <div class="form-group">
-          <label>Page Body</label>
-          <textarea name="editor1" class="form-control" placeholder="Page Body"></textarea>
-        </div>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox"> Published
-          </label>
-        </div>
-        <div class="form-group">
-          <label>Meta Tags</label>
-          <input type="text" class="form-control" placeholder="Add Some Tags...">
-        </div>
-        <div class="form-group">
-          <label>Meta Description</label>
-          <input type="text" class="form-control" placeholder="Add Meta Description...">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
-      </div>
-    </form>
-    </div>
-  </div>
-</div>
-
-  
- <script>
-var d = new Date();
-document.getElementById("demo").innerHTML = d;
-</script>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-  
   </body>
 </html>

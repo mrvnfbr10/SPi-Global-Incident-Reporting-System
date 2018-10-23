@@ -148,12 +148,53 @@ $UserID = $_SESSION['UserID'];
     $query = mysqli_query($conn, "INSERT INTO tickethistory (TicketNo, Title, Description, UserID) VALUES ('$TicketNo','Cancelled','$Reason','$UserID')");
     $successMsg = "Ticket has been cancelled!";
     $ticketshistory = mysqli_query($conn, "SELECT tickethistory.Title AS Title, tickethistory.Description AS Description, tickethistory.HistoryDate AS Date, CONCAT(user.FirstName, user.LastName) AS username FROM tickethistory INNER JOIN user ON tickethistory.UserID = user.UserID WHERE TicketNo = $TicketNo ORDER BY HistoryDate DESC");
+     $ticketDetails = mysqli_query($conn, "SELECT tickets.TicketNo AS TicketNo, CONCAT(user.FirstName, user.LastName) AS FullName, user.EmailAddress AS EmailAddress, user.ImmediateSuperior AS ImmediateSuperior, tblsite.SiteDesc AS Site, tblcategory.CategoryDescription AS Category, tickets.FirstApprover AS FirstApprover, tickets.SecondApprover AS SecondApprover, tickets.ThirdApprover AS ThirdApprover, tickets.FourthApprover AS FourthApprover, tblbusinessunit.BusinessUnitDesc AS BusinessUnit, user.CallBackNumber AS CallbackNumber, tickets.Title AS Title, tickets.ResponseLevel AS Response, tickets.TicketType AS TicketType, tickets.Details AS Details, tickets.Status AS Status FROM tickets INNER JOIN user ON tickets.UserID = user.UserID INNER JOIN tblsite ON user.SiteID = tblsite.SiteID INNER JOIN tblbusinessunit ON user.BusinessUnitID = tblbusinessunit.BusinessUnitID INNER JOIN tblcategory ON tickets.CategoryID = tblcategory.CategoryID WHERE TicketNo = $TicketNo");
+  
+  $a = mysqli_fetch_array($ticketDetails);
+  $TicketNo = $a['TicketNo'];
+  $FullName = $a['FullName'];
+  $EmailAddress = $a['EmailAddress'];
+  $ImmediateSuperior = $a['ImmediateSuperior'];
+  $CallbackNumber = $a['CallbackNumber'];
+  $Site = $a['Site'];
+  $BusinessUnit = $a['BusinessUnit'];
+  $Title = $a['Title'];
+  $Details = $a['Details'];
+  $Category = $a['Category'];
+  $FirstApprover = $a['FirstApprover'];
+  $SecondApprover = $a['SecondApprover'];
+  $ThirdApprover = $a['ThirdApprover'];
+  $FourthApprover = $a['FourthApprover'];
+  $TicketType = $a['TicketType'];
+  $Response = $a['Response'];
+  $Status = $a['Status'];
+
   }
   else if($Action == 'Rejected'){
     $a = mysqli_query($conn, "UPDATE tickets SET Status = '$Action' WHERE TicketNo = $TicketNo");
     $b = mysqli_query($conn, "INSERT INTO tickethistory (TicketNo, Title, Description, UserID) VALUES ('$TicketNo','Rejected','$Reason','$UserID')");
     $successMsg = "Ticket has been Rejected!";
     $ticketshistory = mysqli_query($conn, "SELECT tickethistory.Title AS Title, tickethistory.Description AS Description, tickethistory.HistoryDate AS Date, CONCAT(user.FirstName, user.LastName) AS username FROM tickethistory INNER JOIN user ON tickethistory.UserID = user.UserID WHERE TicketNo = $TicketNo ORDER BY HistoryDate DESC");
+     $ticketDetails = mysqli_query($conn, "SELECT tickets.TicketNo AS TicketNo, CONCAT(user.FirstName, user.LastName) AS FullName, user.EmailAddress AS EmailAddress, user.ImmediateSuperior AS ImmediateSuperior, tblsite.SiteDesc AS Site, tblcategory.CategoryDescription AS Category, tickets.FirstApprover AS FirstApprover, tickets.SecondApprover AS SecondApprover, tickets.ThirdApprover AS ThirdApprover, tickets.FourthApprover AS FourthApprover, tblbusinessunit.BusinessUnitDesc AS BusinessUnit, user.CallBackNumber AS CallbackNumber, tickets.Title AS Title, tickets.ResponseLevel AS Response, tickets.TicketType AS TicketType, tickets.Details AS Details, tickets.Status AS Status FROM tickets INNER JOIN user ON tickets.UserID = user.UserID INNER JOIN tblsite ON user.SiteID = tblsite.SiteID INNER JOIN tblbusinessunit ON user.BusinessUnitID = tblbusinessunit.BusinessUnitID INNER JOIN tblcategory ON tickets.CategoryID = tblcategory.CategoryID WHERE TicketNo = $TicketNo");
+  
+  $a = mysqli_fetch_array($ticketDetails);
+  $TicketNo = $a['TicketNo'];
+  $FullName = $a['FullName'];
+  $EmailAddress = $a['EmailAddress'];
+  $ImmediateSuperior = $a['ImmediateSuperior'];
+  $CallbackNumber = $a['CallbackNumber'];
+  $Site = $a['Site'];
+  $BusinessUnit = $a['BusinessUnit'];
+  $Title = $a['Title'];
+  $Details = $a['Details'];
+  $Category = $a['Category'];
+  $FirstApprover = $a['FirstApprover'];
+  $SecondApprover = $a['SecondApprover'];
+  $ThirdApprover = $a['ThirdApprover'];
+  $FourthApprover = $a['FourthApprover'];
+  $TicketType = $a['TicketType'];
+  $Response = $a['Response'];
+  $Status = $a['Status'];
   }
   else{
     $successMsg = "Opps! Something went wrong, please try again later.".mysqli_error($conn);
@@ -187,6 +228,26 @@ if(isset($_POST['btnApprove'])){
     $y = mysqli_query($conn, "INSERT INTO tickethistory (TicketNo, Title, Description, UserID) VALUES ('$TicketNo','Approved','$Comment','$UserID')");
     $successMsg= "Ticket has been approved!";
     $ticketshistory = mysqli_query($conn, "SELECT tickethistory.Title AS Title, tickethistory.Description AS Description, tickethistory.HistoryDate AS Date, CONCAT(user.FirstName, user.LastName) AS username FROM tickethistory INNER JOIN user ON tickethistory.UserID = user.UserID WHERE TicketNo = $TicketNo ORDER BY HistoryDate DESC");
+     $ticketDetails = mysqli_query($conn, "SELECT tickets.TicketNo AS TicketNo, CONCAT(user.FirstName, user.LastName) AS FullName, user.EmailAddress AS EmailAddress, user.ImmediateSuperior AS ImmediateSuperior, tblsite.SiteDesc AS Site, tblcategory.CategoryDescription AS Category, tickets.FirstApprover AS FirstApprover, tickets.SecondApprover AS SecondApprover, tickets.ThirdApprover AS ThirdApprover, tickets.FourthApprover AS FourthApprover, tblbusinessunit.BusinessUnitDesc AS BusinessUnit, user.CallBackNumber AS CallbackNumber, tickets.Title AS Title, tickets.ResponseLevel AS Response, tickets.TicketType AS TicketType, tickets.Details AS Details, tickets.Status AS Status FROM tickets INNER JOIN user ON tickets.UserID = user.UserID INNER JOIN tblsite ON user.SiteID = tblsite.SiteID INNER JOIN tblbusinessunit ON user.BusinessUnitID = tblbusinessunit.BusinessUnitID INNER JOIN tblcategory ON tickets.CategoryID = tblcategory.CategoryID WHERE TicketNo = $TicketNo");
+  
+  $a = mysqli_fetch_array($ticketDetails);
+  $TicketNo = $a['TicketNo'];
+  $FullName = $a['FullName'];
+  $EmailAddress = $a['EmailAddress'];
+  $ImmediateSuperior = $a['ImmediateSuperior'];
+  $CallbackNumber = $a['CallbackNumber'];
+  $Site = $a['Site'];
+  $BusinessUnit = $a['BusinessUnit'];
+  $Title = $a['Title'];
+  $Details = $a['Details'];
+  $Category = $a['Category'];
+  $FirstApprover = $a['FirstApprover'];
+  $SecondApprover = $a['SecondApprover'];
+  $ThirdApprover = $a['ThirdApprover'];
+  $FourthApprover = $a['FourthApprover'];
+  $TicketType = $a['TicketType'];
+  $Response = $a['Response'];
+  $Status = $a['Status'];
   }
 
   else if($Status == 'For Level 2 Approval'){
@@ -194,6 +255,26 @@ if(isset($_POST['btnApprove'])){
     $y = mysqli_query($conn, "INSERT INTO tickethistory (TicketNo, Title, Description, UserID) VALUES ('$TicketNo','Approved','$Comment','$UserID')");
     $successMsg= "Ticket has been approved!";
     $ticketshistory = mysqli_query($conn, "SELECT tickethistory.Title AS Title, tickethistory.Description AS Description, tickethistory.HistoryDate AS Date, CONCAT(user.FirstName, user.LastName) AS username FROM tickethistory INNER JOIN user ON tickethistory.UserID = user.UserID WHERE TicketNo = $TicketNo ORDER BY HistoryDate DESC");
+     $ticketDetails = mysqli_query($conn, "SELECT tickets.TicketNo AS TicketNo, CONCAT(user.FirstName, user.LastName) AS FullName, user.EmailAddress AS EmailAddress, user.ImmediateSuperior AS ImmediateSuperior, tblsite.SiteDesc AS Site, tblcategory.CategoryDescription AS Category, tickets.FirstApprover AS FirstApprover, tickets.SecondApprover AS SecondApprover, tickets.ThirdApprover AS ThirdApprover, tickets.FourthApprover AS FourthApprover, tblbusinessunit.BusinessUnitDesc AS BusinessUnit, user.CallBackNumber AS CallbackNumber, tickets.Title AS Title, tickets.ResponseLevel AS Response, tickets.TicketType AS TicketType, tickets.Details AS Details, tickets.Status AS Status FROM tickets INNER JOIN user ON tickets.UserID = user.UserID INNER JOIN tblsite ON user.SiteID = tblsite.SiteID INNER JOIN tblbusinessunit ON user.BusinessUnitID = tblbusinessunit.BusinessUnitID INNER JOIN tblcategory ON tickets.CategoryID = tblcategory.CategoryID WHERE TicketNo = $TicketNo");
+  
+  $a = mysqli_fetch_array($ticketDetails);
+  $TicketNo = $a['TicketNo'];
+  $FullName = $a['FullName'];
+  $EmailAddress = $a['EmailAddress'];
+  $ImmediateSuperior = $a['ImmediateSuperior'];
+  $CallbackNumber = $a['CallbackNumber'];
+  $Site = $a['Site'];
+  $BusinessUnit = $a['BusinessUnit'];
+  $Title = $a['Title'];
+  $Details = $a['Details'];
+  $Category = $a['Category'];
+  $FirstApprover = $a['FirstApprover'];
+  $SecondApprover = $a['SecondApprover'];
+  $ThirdApprover = $a['ThirdApprover'];
+  $FourthApprover = $a['FourthApprover'];
+  $TicketType = $a['TicketType'];
+  $Response = $a['Response'];
+  $Status = $a['Status'];
   }
 
   else if($Status == 'For Level 1 Approval'){
@@ -201,6 +282,26 @@ if(isset($_POST['btnApprove'])){
     $y = mysqli_query($conn, "INSERT INTO tickethistory (TicketNo, Title, Description, UserID) VALUES ('$TicketNo','Approved','$Comment','$UserID')");
     $successMsg= "Ticket has been approved!";
     $ticketshistory = mysqli_query($conn, "SELECT tickethistory.Title AS Title, tickethistory.Description AS Description, tickethistory.HistoryDate AS Date, CONCAT(user.FirstName, user.LastName) AS username FROM tickethistory INNER JOIN user ON tickethistory.UserID = user.UserID WHERE TicketNo = $TicketNo ORDER BY HistoryDate DESC");
+     $ticketDetails = mysqli_query($conn, "SELECT tickets.TicketNo AS TicketNo, CONCAT(user.FirstName, user.LastName) AS FullName, user.EmailAddress AS EmailAddress, user.ImmediateSuperior AS ImmediateSuperior, tblsite.SiteDesc AS Site, tblcategory.CategoryDescription AS Category, tickets.FirstApprover AS FirstApprover, tickets.SecondApprover AS SecondApprover, tickets.ThirdApprover AS ThirdApprover, tickets.FourthApprover AS FourthApprover, tblbusinessunit.BusinessUnitDesc AS BusinessUnit, user.CallBackNumber AS CallbackNumber, tickets.Title AS Title, tickets.ResponseLevel AS Response, tickets.TicketType AS TicketType, tickets.Details AS Details, tickets.Status AS Status FROM tickets INNER JOIN user ON tickets.UserID = user.UserID INNER JOIN tblsite ON user.SiteID = tblsite.SiteID INNER JOIN tblbusinessunit ON user.BusinessUnitID = tblbusinessunit.BusinessUnitID INNER JOIN tblcategory ON tickets.CategoryID = tblcategory.CategoryID WHERE TicketNo = $TicketNo");
+  
+  $a = mysqli_fetch_array($ticketDetails);
+  $TicketNo = $a['TicketNo'];
+  $FullName = $a['FullName'];
+  $EmailAddress = $a['EmailAddress'];
+  $ImmediateSuperior = $a['ImmediateSuperior'];
+  $CallbackNumber = $a['CallbackNumber'];
+  $Site = $a['Site'];
+  $BusinessUnit = $a['BusinessUnit'];
+  $Title = $a['Title'];
+  $Details = $a['Details'];
+  $Category = $a['Category'];
+  $FirstApprover = $a['FirstApprover'];
+  $SecondApprover = $a['SecondApprover'];
+  $ThirdApprover = $a['ThirdApprover'];
+  $FourthApprover = $a['FourthApprover'];
+  $TicketType = $a['TicketType'];
+  $Response = $a['Response'];
+  $Status = $a['Status'];
   }
 }
 
@@ -242,7 +343,7 @@ if(isset($_POST['btnApprove'])){
           <ul class="nav navbar-nav navbar-right">
             <li><h6 id = "demo"></h6></li>
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
-            <li><a href="login.php">Logout</a></li>
+            <li><a href="logout.php">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -258,7 +359,7 @@ if(isset($_POST['btnApprove'])){
     <section id="breadcrumb">
       <div class="container">
         <ol class="breadcrumb">
-          <li><a href="index.php">Dashboard</a></li>
+          <li><a href="admindashboard.php">Dashboard</a></li>
           <li class="active">Update Ticket</li>
         </ol>
       </div>

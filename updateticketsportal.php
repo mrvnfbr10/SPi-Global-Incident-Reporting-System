@@ -2,6 +2,13 @@
 include_once('db.php');
 session_start();
 
+$UserID = $_SESSION['UserID'];
+
+$fetchticket = "SELECT COUNT(TicketNo) AS Ticket FROM tickets WHERE UserID = '$UserID' ";
+$filterticket = mysqli_query($conn, $fetchticket);
+
+$b = mysqli_fetch_array($filterticket);
+$Ticket = $b['Ticket'];
 
 if(isset($_GET['edit'])){
   $TicketNo = $_GET['edit'];
@@ -174,7 +181,7 @@ $UserID = $_SESSION['UserID'];
              <a href="selfservicePortal.php" class="list-group-item">
               <span class="glyphicon glyphicon-home" aria-hindden="true"></span> Dashboard
               </a>
-              <a href="openticketsPortal.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Previous Tickets <span class="badge"></span></a>
+              <a href="openticketsPortal.php" class="list-group-item active main-color-bg"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Previous Tickets <span class="badge"><?php echo $Ticket; ?></span></a>
               <a href="fileTicketPortal.php" class="list-group-item"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Log Ticket </a>
             </div>
             <div class="well">
@@ -222,58 +229,14 @@ $UserID = $_SESSION['UserID'];
                   <h4>Business Unit/Campaign: <?php echo $BusinessUnit ?></h4>
                   <div class="form-group">
                       <label>Title</label>
-                      <input type="text" name = "Title" class="form-control" placeholder="Title (i.e MS Office Installation)" value="<?php echo $Title ?>">
+                      <input type="text" name = "Title" class="form-control" placeholder="Title (i.e MS Office Installation)" disabled="disabled" value="<?php echo $Title ?>">
                     </div>
                   <div class="form-group">
                     <label>Details</label>
                     <textarea name="details" rows="10" cols="60" class="form-control" placeholder="Ticket Details" value = "<?php echo $Details ?>"><?php echo $Details ?>
                     </textarea>
                   </div>
-                  <div class="form-group">
-                      <label>Category</label>
-                      <select class="form-control" name="Category" id="sel1">
-                      <option value="<?php echo $Category ?>"><?php echo $Category?></option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Ticket Type</label>
-                        <select class="form-control" name="TicketType" id="sel1">
-                          <option value="<?php echo $TicketType ?>"><?php echo $TicketType ?></option>
-                        </select>
-                      </div>
-                    <div class="form-group">
-                        <label>Response Level</label>
-                        <select class="form-control" name="ResponseLevel" id="sel1">
-                            <option value="<?php echo $Response ?>"><?php echo $Response ?></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>First Approver</label>
-                        <select class="form-control" name="FirstApprover" id="sel1">
-                          <option value="<?php echo $FirstApprover ?>"><?php echo $FirstApprover ?></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Second Approver</label>
-                        <select class="form-control" name="SecondApprover" id="sel1">
-                          <option value="<?php echo $SecondApprover ?>"><?php echo $SecondApprover?></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Third Approver</label>
-                        <select class="form-control" name="ThirdApprover" id="sel1">
-                          <option value="<?php echo $ThirdApprover ?>"><?php echo $ThirdApprover ?></option>
-                            <option value=""></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Fourth Approver</label>
-                        <select class="form-control" name="FourthApprover" id="sel1">
-                          <option value="<?php echo $FourthApprover ?>"><?php echo $FourthApprover ?></option>
-                            <option value=""></option>
-                            <option value="Not Applicable">Not Applicable</option>
-                        </select>
-                    </div>
+                  
                   <input type="submit" name = "btnUpdate" class="btn btn-success" value="Save Ticket Changes">
                   <a href="fetchIR.php?edit=<?php echo $row['TicketNo']?>"class="btn btn-danger">File Incident Report</a>
                   <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#addPage">Cancel / Reject Ticket</button>

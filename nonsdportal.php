@@ -49,7 +49,7 @@ function filterTable($fetchticket){
           
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Welcome, <?php echo $_SESSION['FullName'] ?></a></li>
-            <li><a href="login.php">Logout</a></li>
+            <li><a href="logout.php">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -74,7 +74,7 @@ function filterTable($fetchticket){
         <div class="row">
           <div class="col-md-3">
             <div class="list-group">
-              <a href="index.php" class="list-group-item active main-color-bg">
+              <a href="admindashboard.php" class="list-group-item active main-color-bg">
                 <span class="glyphicon glyphicon-home" aria-hidden="true"></span> Dashboard
               </a>
               <a href="opentickets.php" class="list-group-item"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Open Tickets <span class="badge">10</span></a>
@@ -120,6 +120,24 @@ function filterTable($fetchticket){
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title">Tickets Under Approval by ME</h3>
+                </div>
+                <div class="panel-body">
+                  <table class="table table-striped table-hover" id="tbltickets">
+                     <thead>
+                       <tr>
+                        <th>Ticket No.</th>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                     </thead>
+                    </table>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Tasks Assigned to ME</h3>
                 </div>
                 <div class="panel-body">
                   <table class="table table-striped table-hover" id="tbltickets">
@@ -186,10 +204,6 @@ function filterTable($fetchticket){
     </div>
   </div>
 </div>
-
-  <script>
-     CKEDITOR.replace( 'editor1' );
- </script>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
